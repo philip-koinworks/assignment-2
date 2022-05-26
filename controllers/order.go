@@ -3,7 +3,8 @@ package controllers
 import (
 	"assignment-2/params"
 	"assignment-2/services"
-	"fmt"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,9 +21,10 @@ func NewOrderController(service *services.OrderService) *OrderController {
 }
 
 func (p *OrderController) CreateNewOrder(c *gin.Context) {
-	var req params.CreateOrder
+	var reqOrderItem params.CreateOrderItem
 
-	err := c.ShouldBindJSON(&req)
+	body, err := ioutil.ReadAll(c.Request.Body)
+
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, params.Response{
 			Status:         http.StatusBadRequest,
@@ -32,9 +34,9 @@ func (p *OrderController) CreateNewOrder(c *gin.Context) {
 		return
 	}
 
-	response := p.orderService.CreateOrder(req)
-	fmt.Println("test")
-	fmt.Println(response)
+	err = json.Unmarshal(body, &reqOrderItem)
+
+	response := p.orderService.CreateOrder(reqOrderItem)
 	c.JSON(response.Status, response)
 }
 

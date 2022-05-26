@@ -22,12 +22,14 @@ func NewOrderService(repo repositories.OrderRepo) *OrderService {
 	}
 }
 
-func (p *OrderService) CreateOrder(request params.CreateOrder) *params.Response {
-	model := models.Order{
-		CustomerName: request.CustomerName,
+func (p *OrderService) CreateOrder(request params.CreateOrderItem) *params.Response {
+	orderModel := models.OrderItem{
+		Order: models.Order{CustomerName: request.CustomerName},
+		Items: []models.Item{},
 	}
 
-	err := p.orderRepo.CreateOrder(&model)
+	id, err := p.orderRepo.CreateOrder(&orderModel.Order)
+
 	if err != nil {
 		return &params.Response{
 			Status:         400,
@@ -35,6 +37,18 @@ func (p *OrderService) CreateOrder(request params.CreateOrder) *params.Response 
 			AdditionalInfo: err.Error(),
 		}
 	}
+
+	for _, item := range request.Items {
+		modelItem := models.Item{
+			OrderId:         id,
+			ItemCode:        item.ItemCode,
+			ItemDescription: item.ItemDescription,
+			ItemQuantity:    item.ItemQuantity,
+		}
+		orderModel.Items = append(orderModel.Items, modelItem)
+	}
+
+	err = p.orderRepo.CreateItemOrder(&orderModel.Items)
 
 	return &params.Response{
 		Status:  200,

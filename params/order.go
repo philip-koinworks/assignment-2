@@ -6,5 +6,5 @@ type CreateOrder struct {
 
 type CreateOrderItem struct {
 	CreateOrder
-	I []CreateItem
+	Items []CreateItem
 }

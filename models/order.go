@@ -7,5 +7,5 @@ type Order struct {
 
 type OrderItem struct {
 	Order
-	I []Item
+	Items []Item
 }
