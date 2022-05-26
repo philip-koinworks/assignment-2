@@ -25,7 +25,6 @@ func NewOrderService(repo repositories.OrderRepo) *OrderService {
 func (p *OrderService) CreateOrder(request params.CreateOrder) *params.Response {
 	model := models.Order{
 		CustomerName: request.CustomerName,
-		OrderedAt:    request.OrderedAt,
 	}
 
 	err := p.orderRepo.CreateOrder(&model)

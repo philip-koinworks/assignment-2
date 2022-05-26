@@ -1,8 +1,7 @@
 package params
 
 type CreateOrder struct {
-	CustomerName string `json:"customer_name"`
-	OrderedAt    string `json:"ordered_at"`
+	CustomerName string `json:"customerName"`
 }
 
 type CreateOrderItem struct {

@@ -23,7 +23,6 @@ func (p *OrderController) CreateNewOrder(c *gin.Context) {
 	var req params.CreateOrder
 
 	err := c.ShouldBindJSON(&req)
-	fmt.Println(req)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, params.Response{
 			Status:         http.StatusBadRequest,
@@ -34,6 +33,8 @@ func (p *OrderController) CreateNewOrder(c *gin.Context) {
 	}
 
 	response := p.orderService.CreateOrder(req)
+	fmt.Println("test")
+	fmt.Println(response)
 	c.JSON(response.Status, response)
 }
 
