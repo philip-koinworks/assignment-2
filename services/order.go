@@ -23,12 +23,10 @@ func NewOrderService(repo repositories.OrderRepo) *OrderService {
 }
 
 func (p *OrderService) CreateOrder(request params.CreateOrderItem) *params.Response {
-	orderModel := models.OrderItem{
-		Order: models.Order{CustomerName: request.CustomerName},
-		Items: []models.Item{},
-	}
+	orderModel := models.Order{CustomerName: request.CustomerName}
+	orderItem := []models.Item{}
 
-	id, err := p.orderRepo.CreateOrder(&orderModel.Order)
+	id, err := p.orderRepo.CreateOrder(&orderModel)
 
 	if err != nil {
 		return &params.Response{
@@ -45,10 +43,10 @@ func (p *OrderService) CreateOrder(request params.CreateOrderItem) *params.Respo
 			ItemDescription: item.ItemDescription,
 			ItemQuantity:    item.ItemQuantity,
 		}
-		orderModel.Items = append(orderModel.Items, modelItem)
+		orderItem = append(orderItem, modelItem)
 	}
 
-	err = p.orderRepo.CreateItemOrder(&orderModel.Items)
+	err = p.orderRepo.CreateItemOrder(&orderItem)
 
 	return &params.Response{
 		Status:  200,
@@ -70,5 +68,20 @@ func (p *OrderService) GetAllOrders() *params.Response {
 	return &params.Response{
 		Status:  http.StatusOK,
 		Payload: response,
+	}
+}
+
+func (p *OrderService) DeleteOrder(id int) *params.Response {
+	err := p.orderRepo.DeleteOrder(id)
+	if err != nil {
+		return &params.Response{
+			Status:         http.StatusInternalServerError,
+			Error:          "INTERNAL SERVER ERROR",
+			AdditionalInfo: err.Error(),
+		}
+	}
+
+	return &params.Response{
+		Status: http.StatusOK,
 	}
 }

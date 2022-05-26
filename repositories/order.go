@@ -10,6 +10,7 @@ type OrderRepo interface {
 	CreateOrder(order *models.Order) (uint, error)
 	GetAllOrders() (*[]models.Order, error)
 	CreateItemOrder(item *[]models.Item) error
+	DeleteOrder(id int) error
 }
 
 type orderRepo struct {
@@ -44,4 +45,13 @@ func (p *orderRepo) GetAllOrders() (*[]models.Order, error) {
 	}
 
 	return &order, nil
+}
+
+func (p *orderRepo) DeleteOrder(id int) error {
+	err := p.db.Delete(&models.Order{}, id)
+	if err != nil {
+		return err.Error
+	}
+
+	return nil
 }

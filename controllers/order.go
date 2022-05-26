@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,5 +43,19 @@ func (p *OrderController) CreateNewOrder(c *gin.Context) {
 
 func (p *OrderController) GetAllOrders(c *gin.Context) {
 	response := p.orderService.GetAllOrders()
+	c.JSON(response.Status, response)
+}
+
+func (p *OrderController) DeleteOrder(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, params.Response{
+			Status:         http.StatusBadRequest,
+			Error:          "BAD REQUEST",
+			AdditionalInfo: err,
+		})
+		return
+	}
+	response := p.orderService.DeleteOrder(id)
 	c.JSON(response.Status, response)
 }
