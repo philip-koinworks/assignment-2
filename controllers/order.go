@@ -46,6 +46,26 @@ func (p *OrderController) GetAllOrders(c *gin.Context) {
 	c.JSON(response.Status, response)
 }
 
+func (p *OrderController) UpdateOrder(c *gin.Context) {
+	var reqUpdate params.CreateOrderItem
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, params.Response{
+			Status:         http.StatusBadRequest,
+			Error:          "BAD REQUEST",
+			AdditionalInfo: err,
+		})
+		return
+	}
+
+	body, err := ioutil.ReadAll(c.Request.Body)
+	err = json.Unmarshal(body, &reqUpdate)
+
+	response := p.orderService.UpdateOrder(id, reqUpdate)
+	c.JSON(response.Status, response)
+}
+
 func (p *OrderController) DeleteOrder(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

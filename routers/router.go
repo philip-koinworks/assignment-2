@@ -33,6 +33,7 @@ func Router() *gin.Engine {
 
 	router.GET("/orders", orderController.GetAllOrders)
 	router.POST("/orders", orderController.CreateNewOrder)
+	router.PUT("/order/:id", orderController.UpdateOrder)
 	router.DELETE("/order/:id", orderController.DeleteOrder)
 
 	return router

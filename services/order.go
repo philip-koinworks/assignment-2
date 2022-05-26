@@ -85,3 +85,28 @@ func (p *OrderService) DeleteOrder(id int) *params.Response {
 		Status: http.StatusOK,
 	}
 }
+
+func (p *OrderService) UpdateOrder(id int, request params.CreateOrderItem) *params.Response {
+	err := p.orderRepo.UpdateOrder(id, request.CustomerName)
+	if err != nil {
+		return &params.Response{
+			Status:         http.StatusInternalServerError,
+			Error:          "INTERNAL SERVER ERROR",
+			AdditionalInfo: err.Error(),
+		}
+	}
+
+	err = p.orderRepo.UpdateItem(id, request.Items)
+
+	if err != nil {
+		return &params.Response{
+			Status:         http.StatusInternalServerError,
+			Error:          "INTERNAL SERVER ERROR",
+			AdditionalInfo: err.Error(),
+		}
+	}
+
+	return &params.Response{
+		Status: http.StatusOK,
+	}
+}

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"assignment-2/models"
+	"assignment-2/params"
 
 	"gorm.io/gorm"
 )
@@ -11,6 +12,8 @@ type OrderRepo interface {
 	GetAllOrders() (*[]models.Order, error)
 	CreateItemOrder(item *[]models.Item) error
 	DeleteOrder(id int) error
+	UpdateOrder(id int, customerName string) error
+	UpdateItem(id int, items []params.CreateItem) error
 }
 
 type orderRepo struct {
@@ -51,6 +54,28 @@ func (p *orderRepo) DeleteOrder(id int) error {
 	err := p.db.Delete(&models.Order{}, id)
 	if err != nil {
 		return err.Error
+	}
+
+	return nil
+}
+
+func (p *orderRepo) UpdateOrder(id int, customerName string) error {
+	err := p.db.Model(&models.Order{}).Where("ID = ?", id).Update("CustomerName", customerName).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *orderRepo) UpdateItem(id int, items []params.CreateItem) error {
+	err := p.db.Model(&models.Item{}).Where("ID = ?", id).Updates(models.Item{
+		ItemCode:        items[0].ItemCode,
+		ItemDescription: items[0].ItemDescription,
+		ItemQuantity:    items[0].ItemQuantity,
+	}).Error
+	if err != nil {
+		return err
 	}
 
 	return nil
