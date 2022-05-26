@@ -37,7 +37,11 @@ func (p *orderRepo) CreateItemOrder(item *[]models.Item) error {
 }
 
 func (p *orderRepo) GetAllOrders() (*[]models.Order, error) {
-	var person []models.Order
-	err := p.db.Find(&person).Error
-	return &person, err
+	var order []models.Order
+	err := p.db.Preload("Items").Find(&order).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &order, nil
 }

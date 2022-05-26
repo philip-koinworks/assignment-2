@@ -31,6 +31,7 @@ func Router() *gin.Engine {
 
 	router := gin.Default()
 
+	router.GET("/orders", orderController.GetAllOrders)
 	router.POST("/orders", orderController.CreateNewOrder)
 
 	return router
